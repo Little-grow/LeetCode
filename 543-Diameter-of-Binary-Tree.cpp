@@ -12,21 +12,35 @@
  */
 class Solution {
 public:
-    int maxDiameterSoFar = 0;
-    int height(TreeNode* root) {
-        if (!root)
-            return 0;
+    bool isLeaf(TreeNode* root) {
+        if(!root->left && !root->right)
+            return true;
+        return false;
+    }
+    pair<int, int> _diameter(TreeNode* root) {
+        pair<int, int> res;
 
-        int l = height(root->left);
-        int r = height(root->right);
+        if (isLeaf(root))
+            return res;
 
-        maxDiameterSoFar = max(maxDiameterSoFar, l + r);
-        return 1 + max(l,r);
+        pair<int, int> left = make_pair(0, 0);
+        pair<int, int> right = make_pair(0, 0);
+
+        if (root->left)
+            left = _diameter(root->left), res.first += 1 + left.second;
+
+        if(root->right)
+            right = _diameter(root->right), res.first += 1 + right.second;
+
+        //diameter if in one of my children sub tree
+        res.first = max(res.first, max(left.first, right.first)); 
+
+        // normal height 
+        res.second = 1 + max(left.second, right.second);
+        return res;
     }
     int diameterOfBinaryTree(TreeNode* root) {
-        if(!root)
-            return 0;
-        height(root);
-        return maxDiameterSoFar;
+     auto res = _diameter(root);
+     return res.first;
     }
 };
